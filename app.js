@@ -14,6 +14,7 @@ const animalsRouter = require('./routes/animals');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
+const profileRouter = require('./routes/profile');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/animals', animalsRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
+app.use('/profile', profileRouter);
 app.use('/', indexRouter);
 
 
@@ -57,7 +59,8 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  console.log(err);
+  res.render('error', err);
 });
 
 module.exports = app;
