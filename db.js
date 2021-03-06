@@ -1,133 +1,26 @@
 const { Pool } = require('pg')
 const data = require('./data/data.json')
 
-const pool = new Pool({
-        user: 'postgres',
-        host: 'CENSORED',
-        database: 'postgres',
-        password: 'postgres',
-        port: 5432,
-    })
-
-async function fixAnimalData() {
-    await pool.connect();
-    const drop = {
-        text: 'DELETE FROM ANIMALS'
-    };
-    const drp = await pool.query(drop);
-    console.log(drp);
-
-    /*const alter = {
-        text: 'ALTER TABLE ANIMALS ADD COLUMN istransfer INT'
-    };
-    const alt = await pool.query(alter);
-    console.log(alt);*/
-    let mem = [];
-
-    for (let i = 0; i < 200; i++) {
-        const chk = data[i].id;
-        if(mem.includes(chk)) continue;
-        mem.push(chk);
-        const element = {
-            text: 'INSERT INTO ANIMALS ( \
-                ID, \
-                intakedate, \
-                intakereason, \
-                istransfer, \
-                sheltercode, \
-                identichipnumber, \
-                animalname, \
-                breedname, \
-                basecolour, \
-                speciesname, \
-                animalage, \
-                sexname, \
-                location, \
-                movementdate, \
-                movementtype, \
-                istrial, \
-                returndate, \
-                returnedreason, \
-                deceaseddate, \
-                deceasedreason, \
-                diedoffshelter, \
-                puttosleep, \
-                isdoa, \
-                user_id \
-            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)',
-            values: [
-                data[i].id,
-                data[i].intakedate,
-                data[i].intakereason,
-                data[i].istransfer,
-                data[i].sheltercode,
-                data[i].identichipnumber,
-                data[i].animalname,
-                data[i].breedname,
-                data[i].basecolour,
-                data[i].speciesname,
-                data[i].animalage,
-                data[i].sexname,
-                data[i].location,
-                data[i].movementdate,
-                data[i].movementtype,
-                data[i].istrial,
-                data[i].returndate,
-                data[i].returnedreason,
-                data[i].deceaseddate,
-                data[i].deceasedreason,
-                data[i].diedoffshelter,
-                data[i].puttosleep,
-                data[i].isdoa,
-                Math.floor(Math.random()*2)+1
-            ]
-        
-        };
-        const ins = await pool.query(element);
-        console.log(ins);
-    }
-
-    const ct = await pool.query('SELECT * FROM ANIMALS');
-    console.log(ct.rowCount);
-}
-
 async function getAllAnimals() {
-    await pool.connect()
-    const res = await pool.query('SELECT * FROM ANIMALS')
-    return res.rows
+    return data
 }
 
 async function getAllAnimalsWithUser() {
-    await pool.connect()
-    const res = await pool.query('SELECT ID, ANIMALNAME, BREEDNAME, SPECIESNAME, ANIMALAGE, BASECOLOUR, NAME AS OWNER \
-                                FROM ANIMALS A, USERS U WHERE A.USER_ID = U.USER_ID')
-    return res.rows
+    return null
 }
 
 async function getAnimalById(id) {
-    await pool.connect()
-    const query = {
-        text: 'SELECT * FROM ANIMALS WHERE ID = $1',
-        values: [id]
-    }
-    const res = await pool.query(query);
+    const res = data.find(animal => animal.id = id);
     return res.rows[0];
 }
 
 async function insertAnimal(newAnimal) {
-    await pool.connect()
-    const insert = {
-        text: 'INSERT INTO ANIMALS (ANIMALNAME, ANIMALAGE, BREEDNAME, SPECIESNAME, BASECOLOUR) VALUES ($1,$2,$3,$4,$5) RETURNING ID',
-        values: [
-            newAnimal.animalsname,
-            newAnimal.animalsage,
-            newAnimal.breedname,
-            newAnimal.speciesname,
-            newAnimal.basecolour
-        ]
-    }
-    const res = await pool.query(insert);
-    return res
+    const id = data.length + 1;
+    newAnimal = req.body;
+    newAnimal.id = id;
+    animalSchema.validate(newAnimal);
+    data.push(newAnimal);
+    return newAnimal
 }
 
 async function updateAnimal(id, animal) {

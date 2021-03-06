@@ -5,12 +5,25 @@ const cookieParser = require('cookie-parser');
 const lessMiddleware = require('less-middleware');
 const logger = require('morgan');
 const hbs = require('express-handlebars');
+require('dotenv').config();
+require('./config/passport');
+const cookieSession = require('cookie-session');
+const passport = require('passport');
 
 const animalsRouter = require('./routes/animals');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 
 const app = express();
+
+app.use(cookieSession({
+  maxAge: 24 * 60 * 60 * 1000,
+  keys: ['clave']
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // view engine setup
 app.engine('hbs', hbs({extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layouts'}));
@@ -26,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/animals', animalsRouter);
 app.use('/users', usersRouter);
+app.use('/auth', authRouter);
 app.use('/', indexRouter);
 
 
