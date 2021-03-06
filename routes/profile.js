@@ -4,9 +4,10 @@ const router = express.Router();
 
 
 router.get('/', async function (req, res) {
-    if(!req.user) res.redirect('/auth/google/login')
+    if(!req.user) res.redirect('/auth/login')
     console.log(req.user);
-    res.render('profile',req.user);
+    const profile = req.user;
+    res.render('profile');
 });
 
 

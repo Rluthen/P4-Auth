@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 let users = require('../data/users.json')
+const fs = require('fs')
 const router = express.Router();
 
 
@@ -38,6 +39,11 @@ router.get('/google/callback',
                 photo: profile.photos[0].value
             };
             users.push(newUser);
+            fs.writeFile('../P4-Auth/data/users.json', JSON.stringify(users), function(err, data) {
+                if(err) {
+                    return console.log(err);
+                }
+            });
             res.set('user',newUser)
             res.redirect('/profile');
 
