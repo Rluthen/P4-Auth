@@ -19,13 +19,13 @@ router.get('/google/redirect', async function (req, res) {
     res.redirect('/')
 });
 
-router.get('/google/callback', async function (req, res) {
+router.get('/google/callback', 
     passport.authenticate('google', { failureRedirect: '/login'}),
     function (req, res) {
         console.log(req.query.code);
         res.redirect('/')
     }
-});
+);
 
 router.get('/logout', async function (req, res) {
     res.send('LOGOUT')
